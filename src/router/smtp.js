@@ -86,6 +86,10 @@ router.delete("/smtp/delete/:id", userAuthenticate, async (req, res) => {
         if (!id) {
             throw new Error("Invalid id")
         }
+        const isUserExits = await SMTP.findById(id)
+        if (!isUserExits) {
+            throw new Error("Something went wrong please login again later")
+        }
         await SMTP.findByIdAndDelete(id)
         res.json({ message: "SMTP server deleted successfully" })
     } catch (error) {
