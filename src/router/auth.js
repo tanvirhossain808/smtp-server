@@ -11,6 +11,14 @@ router.post("/signup", async (req, res) => {
         if (!password || !email) {
             res.json("Please fill the input filed ")
         }
+        const acceptableFields = ["password", "email"]
+        if (
+            !acceptableFields.every((field) =>
+                Object.keys(req.body).includes(field)
+            )
+        ) {
+            throw new Error("Invalid fields")
+        }
         const isUserAvailable = await User.findOne({ email })
         if (isUserAvailable) {
             return res.status(400).json({ message: "Invalid credential" })

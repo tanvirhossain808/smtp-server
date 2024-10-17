@@ -4,14 +4,19 @@ const generateToken = require("../utils/generateToken")
 const User = require("../models/users")
 const SMTP = require("../models/smtp")
 const router = express.Router()
+const isAcceptedInputField = require("../utils/isAcceptableInput")
 
-router.post("/create/smtp", userAuthenticate, async (req, res) => {
+router.post("/smtp/create", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
 
+        const acceptedFields = ["host", "port", "user", "password", "name"]
         const { host, port, user, password, name } = req.body
         if (!host || !port || !user || !password || !name) {
             throw new Error("Invalid input")
+        }
+        if (!isAcceptedInputField(acceptedFields, Object.keys(req.body))) {
+            throw new Error("Invalid action")
         }
 
         const isUserAvailable = await User.findById(loggedInUser._id)
@@ -32,6 +37,41 @@ router.post("/create/smtp", userAuthenticate, async (req, res) => {
         })
         const data = await smtp.save()
         res.json({ message: "Successfully added smtp server", data: data })
+    } catch (error) {
+        res.status(400).json({
+            message: "Something went wrong",
+            err: error.message,
+        })
+    }
+})
+router.post("/smtp/update/:id", userAuthenticate, async (req, res) => {
+    const acceptedFields = ["host", "port", "user", "password", "name"]
+    try {
+        const { host, port, user, password, name } = req.body
+        const id = req.params.id
+        if (!host || !port || !user || !password || !name) {
+            throw new Error("Invalid input")
+        }
+
+        if (!isAcceptedInputField(acceptedFields, Object.keys(req.body))) {
+            throw new Error("Invalid action")
+        }
+        const currentUser = await SMTP.findById(id)
+
+        if (!currentUser) {
+            throw new Error("User not authenticate please try again")
+        }
+
+        const isUniqueServer = await SMTP.findOne({ name })
+        if (isUniqueServer) {
+            throw new Error("Please select another name")
+        }
+
+        for (const field in req.body) {
+            currentUser[field] = req.body[field]
+        }
+        const data = await currentUser.save()
+        res.json({ message: "SMTP server updated successfully", data: data })
     } catch (error) {
         res.status(400).json({
             message: "Something went wrong",
