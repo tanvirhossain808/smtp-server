@@ -2,16 +2,16 @@ const express = require("express")
 require("dotenv").config()
 const parser = require("cookie-parser")
 const connectDB = require("./config/dbConfig")
-const authRouter = require("./router/auth")
-const smtpRouter = require("./router/smtp")
+// const authRouter = require("./router/auth")
+// const smtpRouter = require("./router/smtp")
 
 const app = express()
 
 app.use(express.json())
 app.use(parser())
 
-app.use("/", authRouter)
-app.use("/", smtpRouter)
+// app.use("/", authRouter)
+// app.use("/", smtpRouter)
 app.get("/", (req, res) => {
     res.json("success")
 })
