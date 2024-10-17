@@ -5,6 +5,7 @@ const User = require("../models/users")
 const SMTP = require("../models/smtp")
 const router = express.Router()
 const isAcceptedInputField = require("../utils/isAcceptableInput")
+const getJWToken = require("../utils/getJWToken")
 
 router.post("/smtp/create", userAuthenticate, async (req, res) => {
     try {
@@ -31,12 +32,12 @@ router.post("/smtp/create", userAuthenticate, async (req, res) => {
             host,
             port,
             user,
-            password: "generateToken(password)",
+            password: generateToken(password),
             userId: loggedInUser._id,
             name,
         })
         const data = await smtp.save()
-        res.json({ message: "Successfully added smtp server", data: data })
+        res.json({ message: "Successfully added smtp server", data })
     } catch (error) {
         res.status(400).json({
             message: "Something went wrong",
@@ -77,6 +78,18 @@ router.post("/smtp/update/:id", userAuthenticate, async (req, res) => {
             message: "Something went wrong",
             err: error.message,
         })
+    }
+})
+router.delete("/smtp/delete/:id", userAuthenticate, async (req, res) => {
+    try {
+        const id = req.params.id
+        if (!id) {
+            throw new Error("Invalid id")
+        }
+        await SMTP.findByIdAndDelete(id)
+        res.json({ message: "SMTP server deleted successfully" })
+    } catch (error) {
+        res.status(400).json({ message: "Invalid action", err: error.message })
     }
 })
 
