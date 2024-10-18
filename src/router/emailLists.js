@@ -97,4 +97,20 @@ router.patch("/emaillists/update/:_id", userAuthenticate, async (req, res) => {
     }
 })
 
+router.delete("/emaillists/delete/:_id", userAuthenticate, async (req, res) => {
+    try {
+        const _id = req.params._id
+        if (!_id || typeof _id !== "string") {
+            throw new Error("Invalid id")
+        }
+        const deletedEmailDoc = await EmailLists.findByIdAndDelete(_id)
+        if (!deletedEmailDoc) {
+            throw new Error("Email list not found")
+        }
+        res.json({ message: "Successfully deleted doc", data: deletedEmailDoc })
+    } catch (error) {
+        res.status(400).json({ message: "fails", err: error.message })
+    }
+})
+
 module.exports = router

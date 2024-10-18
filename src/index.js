@@ -5,6 +5,8 @@ const connectDB = require("./config/dbConfig")
 const authRouter = require("./router/auth")
 const smtpRouter = require("./router/smtp")
 const emailLists = require("./router/emailLists")
+const campingRoute = require("./router/camping")
+const sendEmailRoute = require("./router/sendEmail")
 
 const entryPointRouter = require("./router/users")
 
@@ -17,6 +19,8 @@ app.use("/", entryPointRouter)
 app.use("/", authRouter)
 app.use("/", smtpRouter)
 app.use("/", emailLists)
+app.use("/", campingRoute)
+app.use("/", sendEmailRoute)
 app.get("/", (req, res) => {
     res.json("success")
 })

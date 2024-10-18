@@ -50,7 +50,6 @@ router.post("/login", async (req, res) => {
         }
         const token = await user.getJWtToken()
         res.cookie("token", token)
-        console.log(token)
         res.json({ message: "Logging successfully", token })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })

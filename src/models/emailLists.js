@@ -23,7 +23,6 @@ const emailListSchema = new Schema({
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        max: 300,
         ref: "User",
     },
 })
