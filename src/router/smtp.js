@@ -45,7 +45,7 @@ router.post("/smtp/create", userAuthenticate, async (req, res) => {
         })
     }
 })
-router.post("/smtp/update/:id", userAuthenticate, async (req, res) => {
+router.patch("/smtp/update/:id", userAuthenticate, async (req, res) => {
     const acceptedFields = ["host", "port", "user", "password", "name"]
     try {
         const { host, port, user, password, name } = req.body
