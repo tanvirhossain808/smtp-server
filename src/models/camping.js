@@ -20,6 +20,7 @@ const campingSchema = new Schema({
         ref: "User",
         required: true,
     },
+    smtpAddress: { type: mongoose.Schema.Types.ObjectId, ref: "SMTP" },
 })
 
 module.exports = mongoose.model("Camping", campingSchema)

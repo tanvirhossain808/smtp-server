@@ -91,6 +91,7 @@ router.post(
                 throw new Error(`Camping status is already ${status}`)
             }
             isCampingAvailable.campingStatus = status === "true" ? true : false
+            isCampingAvailable.smtpAddress = smtpId
             if (isCampingAvailable.campingStatus === true) {
                 await emailSender(
                     isCampingAvailable.sendEmail,

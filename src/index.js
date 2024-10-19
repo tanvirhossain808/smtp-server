@@ -7,6 +7,8 @@ const smtpRouter = require("./router/smtp")
 const emailLists = require("./router/emailLists")
 const campingRoute = require("./router/camping")
 const emailRouter = require("./router/emails")
+// const emailReplierChecker = require("./utils/emailReplierChecker")
+const emailReplyChecker = require("./utils/emailReplierChecker")
 
 const entryPointRouter = require("./router/users")
 
@@ -29,8 +31,9 @@ const PORT = process.env.PORT || 8000
 
 connectDB()
     .then(() => {
-        app.listen(PORT, () => {
+        app.listen(PORT, async () => {
             console.log(`Server is running on port ${PORT}`)
+            await emailReplyChecker()
         })
     })
     .catch((err) => {

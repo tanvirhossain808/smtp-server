@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer")
 const SendEmail = require("../models/sendEmail")
 const EmailLists = require("../models/emailLists")
+const gt = require("./gt")
 const SMTP = require("../models/smtp")
 const getJWToken = require("./getJWToken")
 const campingEmailDetails = require("../utils/getCampingEmailsDetails")
@@ -16,6 +17,10 @@ const emailSender = async (sendEmailId, emailListId, campingId, smtpId) => {
         EmailLists,
         emailListId,
         "email lists details"
+    )
+    const hashedCampingId = await gt(
+        { campingId },
+        process.env.REPLY_EMAIL_TOKEN_HASH
     )
     const smptServerDetails = await campingEmailDetails(
         SMTP,
@@ -43,10 +48,7 @@ const emailSender = async (sendEmailId, emailListId, campingId, smtpId) => {
             from: "tanvir@ethicalden.com",
             to: email,
             subject: sendEmailDetails.subject,
-            text: sendEmailDetails.body,
-            headers: {
-                campingId: campingId, // Include your custom ID
-            },
+            text: `${sendEmailDetails.body} delivered to ${hashedCampingId}`,
         }
 
         try {
