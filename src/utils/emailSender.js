@@ -22,11 +22,11 @@ const emailSender = async (sendEmailId, emailListId, campingId, smtpId) => {
         smtpId,
         "SMTP server not found"
     )
-    const smtpPassword = getJWToken(
+    const { password } = await getJWToken(
         smptServerDetails.password,
         process.env.HASHED_PASS
     )
-    console.log(smtpPassword, "smtp password")
+    console.log(password, "smtp password")
 
     const transporter = nodemailer.createTransport({
         host: smptServerDetails.host,
@@ -34,13 +34,13 @@ const emailSender = async (sendEmailId, emailListId, campingId, smtpId) => {
         secure: false,
         auth: {
             user: smptServerDetails.user,
-            pass: smtpPassword,
+            pass: password,
         },
     })
 
     for (const email of sendEmailListsDetails.emails) {
         let mailOptions = {
-            from: smptServerDetails.from,
+            from: "tanvir@ethicalden.com",
             to: email,
             subject: sendEmailDetails.subject,
             text: sendEmailDetails.body,

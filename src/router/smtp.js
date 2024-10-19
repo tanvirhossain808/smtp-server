@@ -7,13 +7,28 @@ const router = express.Router()
 const isAcceptedInputField = require("../utils/isAcceptableInput")
 const getJWToken = require("../utils/getJWToken")
 
+router.get("/smtp/lists", userAuthenticate, async (req, res) => {
+    try {
+        const loggedInUser = req.user
+        const data = await SMTP.find({ userId: loggedInUser._id })
+        if (data.length === 0) {
+            throw new Error("No smtp servers found")
+        }
+        res.json({ data })
+    } catch (error) {
+        res.status(400).json({
+            message: "Something went wrong",
+            err: error.message,
+        })
+    }
+})
 router.post("/smtp/create", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
 
-        const acceptedFields = ["host", "port", "user", "password", "name"]
-        const { host, port, user, password, name } = req.body
-        if (!host || !port || !user || !password || !name) {
+        const acceptedFields = ["host", "port", "password", "name", "user"]
+        const { host, port, password, name, user } = req.body
+        if (!host || !port || !password || !name || !user) {
             throw new Error("Invalid input")
         }
         if (!isAcceptedInputField(acceptedFields, Object.keys(req.body))) {
@@ -32,7 +47,7 @@ router.post("/smtp/create", userAuthenticate, async (req, res) => {
             host,
             port,
             user,
-            password: generateToken(password),
+            password: await generateToken(password),
             userId: loggedInUser._id,
             name,
         })

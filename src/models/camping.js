@@ -15,7 +15,11 @@ const campingSchema = new Schema({
         ref: "SendEmail",
     },
     campingStatus: { type: Boolean, default: false },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
 })
 
 module.exports = mongoose.model("Camping", campingSchema)

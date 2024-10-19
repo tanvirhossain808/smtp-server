@@ -9,7 +9,7 @@ const router = express.Router()
 router.get("/mails/campings", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
-        const campings = await Camping.find({ createBy: loggedInUser._id })
+        const campings = await Camping.find({ createdBy: loggedInUser._id })
         if (campings.length === 0) {
             throw new Error("No campings found")
         }
@@ -43,11 +43,10 @@ router.post("/mails/set/camping", userAuthenticate, async (req, res) => {
             name,
             emailLists: emailListId,
             sendEmail: sendEmailId,
-            createBy: loggedInUser._id,
+            createdBy: loggedInUser._id,
         })
         const data = await newCampings.save()
         res.json({ message: "Successfully created camping", data })
-        res.json({ message: "Successfully fetched campings", data: campings })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
     }
@@ -58,8 +57,12 @@ router.post(
     async (req, res) => {
         try {
             const loggedInUser = req.user
-            const { status, campingId, name } = req.params
-            if (!status || !campingId || !name) {
+            const { smtpId, smtpPassword } = req.body
+            // if (!smtpPassword) {
+            //     smtpPassword = 2323
+            // }
+            const { status, campingId } = req.params
+            if (!status || !campingId) {
                 throw new Error(
                     "Invalid operation please try again with proper information"
                 )
@@ -67,6 +70,14 @@ router.post(
             const acceptedStatus = ["true"]
             if (!acceptedStatus.includes(status)) {
                 throw new Error("Invalid status")
+            }
+            const isCampingAlreadyRunning = await Camping.findOne({
+                campingStatus: true,
+                createdBy: loggedInUser._id,
+                _id: campingId,
+            })
+            if (isCampingAlreadyRunning) {
+                throw new Error("Camping is already running")
             }
             const isCampingAvailable = await Camping.findOne({
                 campingStatus: false,
@@ -84,11 +95,12 @@ router.post(
                 await emailSender(
                     isCampingAvailable.sendEmail,
                     isCampingAvailable.emailLists,
-                    campingId
+                    campingId,
+                    smtpId
                 )
             }
             const data = await isCampingAvailable.save()
-            res.json({ message: "Camping turned on", data })
+            res.json({ message: "Camping turned on and email sent", data })
         } catch (error) {
             res.status(400).json({ message: "fails", err: error.message })
         }

@@ -10,11 +10,22 @@ const smtpSchema = new Schema({
         required: true,
         trim: true,
         max: 100,
+        validate: {
+            validator: function (value) {
+                return validator.isFQDN(value)
+            },
+            message: (props) => `${props.value} is not a valid host!`,
+        },
     },
     port: {
         type: Number,
         default: 587,
         max: 100000,
+        validate(value) {
+            if (value < 1 || value > 65535) {
+                throw new Error("Port must be between 1 and 65535")
+            }
+        },
     },
     user: {
         type: String,
