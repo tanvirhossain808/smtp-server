@@ -6,7 +6,7 @@ const authRouter = require("./router/auth")
 const smtpRouter = require("./router/smtp")
 const emailLists = require("./router/emailLists")
 const campingRoute = require("./router/camping")
-const sendEmailRoute = require("./router/sendEmail")
+const emailRouter = require("./router/emails")
 
 const entryPointRouter = require("./router/users")
 
@@ -20,7 +20,8 @@ app.use("/", authRouter)
 app.use("/", smtpRouter)
 app.use("/", emailLists)
 app.use("/", campingRoute)
-app.use("/", sendEmailRoute)
+// app.use("/", sendEmailRoute)
+app.use("/", emailRouter)
 app.get("/", (req, res) => {
     res.json("success")
 })

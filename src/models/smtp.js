@@ -1,4 +1,6 @@
 const mongoose = require("mongoose")
+
+const validator = require("validator")
 const { Schema } = mongoose
 
 const smtpSchema = new Schema({
@@ -17,7 +19,12 @@ const smtpSchema = new Schema({
     user: {
         type: String,
         required: true,
-        max: 100,
+        max: 200,
+        validate(email) {
+            if (!validator.isEmail(email)) {
+                throw new Error("Invalid email")
+            }
+        },
     },
     password: {
         type: String,
