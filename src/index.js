@@ -17,7 +17,7 @@ const app = express()
 
 const allowedOrigins = [
     "http://localhost:5173", // Local development
-    "https://your-vercel-app.vercel.app", // Production on Vercel
+    "https://smtp-server-rho.vercel.app", // Production on Vercel
 ]
 
 app.use(
