@@ -7,6 +7,7 @@ const smtpRouter = require("./router/smtp")
 const emailLists = require("./router/emailLists")
 const campingRoute = require("./router/camping")
 const emailRouter = require("./router/emails")
+const cors = require("cors")
 // const emailReplierChecker = require("./utils/emailReplierChecker")
 const emailReplyChecker = require("./utils/emailReplierChecker")
 
@@ -16,6 +17,7 @@ const app = express()
 
 app.use(express.json())
 app.use(parser())
+app.use(cors())
 
 app.use("/", entryPointRouter)
 app.use("/", authRouter)
