@@ -24,6 +24,9 @@ app.use(
 app.use(express.json())
 app.use(parser())
 
+// app.use("/hey", (req, res) => {
+//     res.send("Welcome")
+// })
 app.use("/", entryPointRouter)
 app.use("/", authRouter)
 app.use("/", smtpRouter)

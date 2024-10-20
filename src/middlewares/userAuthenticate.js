@@ -2,7 +2,9 @@ const jwt = require("jsonwebtoken")
 const User = require("../models/users")
 const isUserAuthenticate = async (req, res, next) => {
     try {
+        console.log(req.cookies)
         const { token } = req.cookies
+        console.log(token)
         if (!token) {
             throw new Error("Please login again")
         }

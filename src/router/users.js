@@ -5,7 +5,9 @@ const isUserAutheTicate = require("../middlewares/userAuthenticate")
 const router = express.Router()
 
 router.get("/uganda", isUserAutheTicate, async (req, res) => {
-    res.json(req.user)
+    console.log("hey")
+    res.send(req.user)
+    // res.json(req.user)
     // const user = await User.find({}).select("email")
     // res.json(user)
 })
