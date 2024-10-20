@@ -9,5 +9,6 @@ router.get("/uganda", isUserAutheTicate, async (req, res) => {
     // const user = await User.find({}).select("email")
     // res.json(user)
 })
+//fixing error
 
 module.exports = router
