@@ -15,9 +15,14 @@ const entryPointRouter = require("./router/users")
 
 const app = express()
 
+const allowedOrigins = [
+    "http://localhost:5173", // Local development
+    "https://your-vercel-app.vercel.app", // Production on Vercel
+]
+
 app.use(
     cors({
-        origin: "http://localhost:5173", // Allow requests from this origin
+        origin: allowedOrigins, // Allow requests from these origins
         credentials: true, // Allow credentials (cookies)
     })
 )
