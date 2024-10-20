@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken")
 const User = require("../models/users")
 const isUserAuthenticate = async (req, res, next) => {
     try {
-        return res.send(process.env.APP_PASSWORD)
+        return res.json({ reqs: req.cookies, res })
         console.log(req.cookies)
         const { token } = req.cookies
         console.log(token)
