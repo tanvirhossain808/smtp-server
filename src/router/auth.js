@@ -9,7 +9,7 @@ router.post("/signup", async (req, res) => {
     try {
         const { password, email } = req.body
         if (!password || !email) {
-            res.json("Please fill the input filed ")
+            throw new Error("Please fill the input field")
         }
         const acceptableFields = ["password", "email"]
         if (
@@ -38,7 +38,7 @@ router.post("/login", async (req, res) => {
     try {
         const { password, email } = req.body
         if (!password || !email) {
-            res.json("Please fill the input filed ")
+            return res.json("Please fill the input filed ")
         }
         const user = await User.findOne({ email })
         if (!user) {

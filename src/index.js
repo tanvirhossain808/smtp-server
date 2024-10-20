@@ -15,9 +15,14 @@ const entryPointRouter = require("./router/users")
 
 const app = express()
 
+app.use(
+    cors({
+        origin: "http://localhost:5173", // Allow requests from this origin
+        credentials: true, // Allow credentials (cookies)
+    })
+)
 app.use(express.json())
 app.use(parser())
-app.use(cors())
 
 app.use("/", entryPointRouter)
 app.use("/", authRouter)
