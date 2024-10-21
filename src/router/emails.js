@@ -52,7 +52,7 @@ router.post("/mail/creates", userAuthenticate, async (req, res) => {
             createdBy: loggedInUsers._id,
         })
         const data = await emailBody.save()
-        res.json({ message: "Successfully created email body", data })
+        res.json({ message: "Successfully created email body", success: true })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
     }
