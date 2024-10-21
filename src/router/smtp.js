@@ -14,7 +14,7 @@ router.get("/smtp/lists", userAuthenticate, async (req, res) => {
         if (data.length === 0) {
             throw new Error("No smtp servers found")
         }
-        res.json({ data })
+        res.json({ message: "Successfully fetch smtp lists", success: true })
     } catch (error) {
         res.status(400).json({
             message: "Something went wrong",
@@ -52,7 +52,11 @@ router.post("/smtp/create", userAuthenticate, async (req, res) => {
             name,
         })
         const data = await smtp.save()
-        res.json({ message: "Successfully added smtp server", data })
+        res.json({
+            message: "Successfully added smtp server",
+            data,
+            success: true,
+        })
     } catch (error) {
         res.status(400).json({
             message: "Something went wrong",
