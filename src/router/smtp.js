@@ -14,10 +14,11 @@ router.get("/smtp/lists", userAuthenticate, async (req, res) => {
         if (data.length === 0) {
             throw new Error("No smtp servers found")
         }
-        res.json(
-            { message: "Successfully fetch smtp lists", success: true },
-            data
-        )
+        res.json({
+            message: "Successfully fetch smtp lists",
+            success: true,
+            data,
+        })
     } catch (error) {
         res.status(400).json({
             message: "Something went wrong",
