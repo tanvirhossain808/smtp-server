@@ -28,7 +28,11 @@ router.post("/signup", async (req, res) => {
         const user = new User({ email, password: encryptedPassword })
         const token = await user.getJWtToken()
         const data = await user.save()
-        res.cookie("token", token)
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+        })
         res.json({ message: "User created successfully", data })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
@@ -49,12 +53,10 @@ router.post("/login", async (req, res) => {
             throw new Error("invalid credentials")
         }
         const token = await user.getJWtToken()
-        // res.cookie("token", token)
         res.cookie("token", token, {
-            httpOnly: true, // Ensures the cookie is not accessible via JavaScript (optional, but recommended for security)
-            secure: true, // Ensures the cookie is sent over HTTPS only (useful when deployed)
-            sameSite: "None", // Allows cross-origin requests to include the cookie
-            // maxAge: 24 * 60 * 60 * 1000, // Optional: Cookie expiry time (1 day here)
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
         })
         res.json({ message: "Logging successfully", token })
     } catch (error) {
@@ -62,4 +64,27 @@ router.post("/login", async (req, res) => {
     }
 })
 
+//toto this is for tesing local
+router.post("/logins", async (req, res) => {
+    try {
+        const { password, email } = req.body
+        if (!password || !email) {
+            return res.json("Please fill the input filed ")
+        }
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({ message: "Invalid credential" })
+        }
+        const isPasswordValid = await user.validatePassword(password)
+        if (!isPasswordValid) {
+            throw new Error("invalid credentials")
+        }
+        const token = await user.getJWtToken()
+        // res.cookie("token", token)
+        res.cookie("token", token)
+        res.json({ message: "Logging successfully", token })
+    } catch (error) {
+        res.status(400).json({ message: "fails", err: error.message })
+    }
+})
 module.exports = router
