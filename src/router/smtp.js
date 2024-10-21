@@ -97,7 +97,7 @@ router.patch("/smtp/update/:id", userAuthenticate, async (req, res) => {
             currentUser[field] = req.body[field]
         }
         const data = await currentUser.save()
-        res.json({ message: "SMTP server updated successfully", data: data })
+        res.json({ message: "SMTP server updated successfully", success: true })
     } catch (error) {
         res.status(400).json({
             message: "Something went wrong",
