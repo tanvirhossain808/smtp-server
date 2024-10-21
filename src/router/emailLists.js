@@ -8,11 +8,17 @@ const router = express.Router()
 router.get("/emaillists", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
-        const data = await EmailLists.find({ createdBy: loggedInUser._id })
+        const data = await EmailLists.find({
+            createdBy: loggedInUser._id,
+        }).select("-createdBy")
         if (data.length === 0) {
             throw new Error("No email lists found")
         }
-        res.json({ message: "Successfully fetched email lists", data })
+        res.json({
+            message: "Successfully fetched email lists",
+            success: true,
+            data,
+        })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
     }
@@ -49,7 +55,7 @@ router.post("/emaillists/create", userAuthenticate, async (req, res) => {
             createdBy: _id,
         })
         const data = await emailLists.save()
-        res.json({ message: "Successfully created email list", data })
+        res.json({ message: "Successfully created email list", success: true })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
     }
@@ -107,7 +113,7 @@ router.delete("/emaillists/delete/:_id", userAuthenticate, async (req, res) => {
         if (!deletedEmailDoc) {
             throw new Error("Email list not found")
         }
-        res.json({ message: "Successfully deleted doc", data: deletedEmailDoc })
+        res.json({ message: "Successfully deleted doc", success: true })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
     }
