@@ -10,7 +10,7 @@ const getJWToken = require("../utils/getJWToken")
 router.get("/smtp/lists", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
-        const data = await SMTP.find({ userId: loggedInUser._id })
+        const data = await SMTP.find({ userId: loggedInUser._id })..select("-userId")
         if (data.length === 0) {
             throw new Error("No smtp servers found")
         }
@@ -109,7 +109,7 @@ router.delete("/smtp/delete/:id", userAuthenticate, async (req, res) => {
         if (!id) {
             throw new Error("Invalid id")
         }
-        const isUserExits = await SMTP.findById(id).select("-userId")
+        const isUserExits = await SMTP.findById(id)
         if (!isUserExits) {
             throw new Error("Something went wrong please login again later")
         }
