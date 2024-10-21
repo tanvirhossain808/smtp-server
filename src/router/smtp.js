@@ -109,7 +109,7 @@ router.delete("/smtp/delete/:id", userAuthenticate, async (req, res) => {
         if (!id) {
             throw new Error("Invalid id")
         }
-        const isUserExits = await SMTP.findById(id)
+        const isUserExits = await SMTP.findById(id).select("-userId")
         if (!isUserExits) {
             throw new Error("Something went wrong please login again later")
         }
