@@ -10,7 +10,9 @@ const getJWToken = require("../utils/getJWToken")
 router.get("/smtp/lists", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
-        const data = await SMTP.find({ userId: loggedInUser._id })..select("-userId")
+        const data = await SMTP.find({ userId: loggedInUser._id }).select(
+            "-userId"
+        )
         if (data.length === 0) {
             throw new Error("No smtp servers found")
         }
