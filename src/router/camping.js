@@ -9,11 +9,17 @@ const router = express.Router()
 router.get("/mails/campings", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
-        const campings = await Camping.find({ createdBy: loggedInUser._id })
+        const campings = await Camping.find({
+            createdBy: loggedInUser._id,
+        }).select("-createdBy")
         if (campings.length === 0) {
             throw new Error("No campings found")
         }
-        res.json({ message: "Successfully fetched campings", data: campings })
+        res.json({
+            message: "Successfully fetched campings",
+            data: campings,
+            success: true,
+        })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
     }
@@ -46,7 +52,7 @@ router.post("/mails/set/camping", userAuthenticate, async (req, res) => {
             createdBy: loggedInUser._id,
         })
         const data = await newCampings.save()
-        res.json({ message: "Successfully created camping", data })
+        res.json({ message: "Successfully created camping", success: true })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
     }
@@ -101,7 +107,10 @@ router.post(
                 )
             }
             const data = await isCampingAvailable.save()
-            res.json({ message: "Camping turned on and email sent", data })
+            res.json({
+                message: "Camping turned on and email sent",
+                success: true,
+            })
         } catch (error) {
             res.status(400).json({ message: "fails", err: error.message })
         }
@@ -171,7 +180,8 @@ router.patch(
             const updatedCamping = await camping.save()
             res.json({
                 message: "Successfully updated camping",
-                data: updatedCamping,
+                // data: updatedCamping,
+                success: true,
             })
         } catch (error) {
             res.status(400).json({ message: "fails", err: error.message })
@@ -189,7 +199,7 @@ router.delete(
             }
             const deleteCamping = await Camping.findByIdAndDelete(campingId)
             if (!deleteCamping) throw new Error("Camping does not exist")
-            res.json({ message: "Camping deleted successfully" })
+            res.json({ message: "Camping deleted successfully", success: true })
         } catch (error) {
             res.status(400).json({ message: "fails", err: error.message })
         }

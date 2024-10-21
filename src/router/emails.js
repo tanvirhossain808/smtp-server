@@ -16,6 +16,7 @@ router.get("/mail/emailbodylist", userAuthenticate, async (req, res) => {
         res.json({
             message: "Successfully fetched email bodies",
             data: emailsSendLists,
+            success: true,
         })
 
         // const data = await emailBody.save()
