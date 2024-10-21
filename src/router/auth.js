@@ -28,7 +28,13 @@ router.post("/signup", async (req, res) => {
         const user = new User({ email, password: encryptedPassword })
         const token = await user.getJWtToken()
         const data = await user.save()
-        res.cookie("token", token)
+        // res.cookie("token", token)
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+        })
+
         res.json({ message: "User created successfully", data })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
@@ -49,6 +55,18 @@ router.post("/login", async (req, res) => {
             throw new Error("invalid credentials")
         }
         const token = await user.getJWtToken()
+        res.setHeader("Access-Control-Allow-Credentials", true)
+        res.setHeader("Access-Control-Allow-Origin", "*")
+        // another common pattern
+        // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+        res.setHeader(
+            "Access-Control-Allow-Methods",
+            "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+        )
+        res.setHeader(
+            "Access-Control-Allow-Headers",
+            "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+        )
         res.cookie("token", token)
         res.json({ message: "Logging successfully", token })
     } catch (error) {
