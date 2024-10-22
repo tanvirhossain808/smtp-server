@@ -63,7 +63,7 @@ router.post(
     async (req, res) => {
         try {
             const loggedInUser = req.user
-            // const { smtpId, smtpPassword } = req.body
+            const { smtpId, smtpPassword } = req.body
             // if (!smtpPassword) {
             //     smtpPassword = 2323
             // }
