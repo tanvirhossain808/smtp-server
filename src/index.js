@@ -16,9 +16,8 @@ const entryPointRouter = require("./router/users")
 const app = express()
 
 const allowedOrigins = [
-    "http://localhost:5173", // Local development
-    // Production on Vercel
-    "https://email-server-front-end.vercel.app/",
+    "http://localhost:5173",
+    "https://email-server-front-end.vercel.app",
 ]
 
 app.use(
