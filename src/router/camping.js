@@ -58,6 +58,41 @@ router.post("/mails/set/camping", userAuthenticate, async (req, res) => {
         res.status(400).json({ message: "fails", err: error.message })
     }
 })
+
+router.post(
+    "/mails/offcamping/false/:campingId",
+    userAuthenticate,
+    async (req, res) => {
+        try {
+            const loggedInUser = req.user
+            const { campingId } = req.params
+            if (!campingId) {
+                throw new Error("Invalid params")
+            }
+            const acceptedStatus = ["true", "false"]
+            if (!acceptedStatus.includes(status)) {
+                throw new Error("Invalid status")
+            }
+            const isCampingAvailable = await Camping.findOne({
+                campingStatus: true,
+                createdBy: loggedInUser._id,
+                _id: campingId,
+            })
+            if (!isCampingAvailable) {
+                throw new Error("No camping found")
+            }
+            if (!isCampingAvailable.campingStatus === false) {
+                throw new Error(`Camping status is already ${"off"}`)
+            }
+            isCampingAvailable.campingStatus = false
+            const data = await isCampingAvailable.save()
+            res.json({ message: "Camping turned off", success: true })
+        } catch (error) {
+            res.status(400).json({ message: "fails", err: error.message })
+        }
+    }
+)
+
 router.post(
     "/mails/startcamping/:status/:campingId",
     userAuthenticate,
@@ -118,42 +153,7 @@ router.post(
         }
     }
 )
-// router.post(
-//     "/mails/offcamping/:status/:campingId",
-//     userAuthenticate,
-//     async (req, res) => {
-//         try {
-//             const loggedInUser = req.user
-//             const { status, campingId, name } = req.params
-//             if (!status || !campingId || !name) {
-//                 throw new Error("Invalid params")
-//             }
-//             const acceptedStatus = ["true", "false"]
-//             if (!acceptedStatus.includes(status)) {
-//                 throw new Error("Invalid status")
-//             }
-//             const isCampingAvailable = await Camping.findOne({
-//                 $or: [{ campingStatus: false }, { campingStatus: true }],
-//                 createdBy: loggedInUser._id,
-//                 _id: campingId,
-//             })
-//             if (!isCampingAvailable) {
-//                 throw new Error("No camping found")
-//             }
-//             if (!isCampingAvailable.campingStatus === status) {
-//                 throw new Error(`Camping status is already ${status}`)
-//             }
-//             isCampingAvailable.campingStatus = status === "true" ? true : false
-//             if (isCampingAvailable.campingStatus === true) {
-//                 await emailSender()
-//             }
-//             const data = await isCampingAvailable.save()
-//             res.json({ message: "Camping turned on", data })
-//         } catch (error) {
-//             res.status(400).json({ message: "fails", err: error.message })
-//         }
-//     }
-// )
+
 router.patch(
     "/mails/update/camping/:campingId",
     userAuthenticate,
@@ -191,7 +191,7 @@ router.patch(
     }
 )
 router.delete(
-    "/mails/update/camping/:campingId",
+    "/mails/delete/camping/:campingId",
     userAuthenticate,
     async (req, res) => {
         try {
