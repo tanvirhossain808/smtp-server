@@ -33,7 +33,7 @@ router.post("/signup", async (req, res) => {
             secure: true,
             sameSite: "None",
         })
-        res.json({ message: "User created successfully", data })
+        res.json({ message: "User created successfully", token })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })
     }
