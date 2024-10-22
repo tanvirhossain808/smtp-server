@@ -77,7 +77,7 @@ router.post(
             if (!isCampingAvailable) {
                 throw new Error("No camping found")
             }
-            if (!isCampingAvailable.campingStatus === false) {
+            if (isCampingAvailable.campingStatus === false) {
                 throw new Error(`Camping status is already ${"off"}`)
             }
             isCampingAvailable.campingStatus = false
