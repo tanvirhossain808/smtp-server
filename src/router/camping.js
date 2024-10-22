@@ -69,10 +69,6 @@ router.post(
             if (!campingId) {
                 throw new Error("Invalid params")
             }
-            const acceptedStatus = ["true", "false"]
-            if (!acceptedStatus.includes(status)) {
-                throw new Error("Invalid status")
-            }
             const isCampingAvailable = await Camping.findOne({
                 campingStatus: true,
                 createdBy: loggedInUser._id,
