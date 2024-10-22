@@ -195,7 +195,7 @@ router.delete(
     userAuthenticate,
     async (req, res) => {
         try {
-            const campingId = req.params
+            const { campingId } = req.params
             if (!campingId) {
                 throw new Error("Please provide a valid camping id")
             }
