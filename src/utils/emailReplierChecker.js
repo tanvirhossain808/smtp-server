@@ -16,24 +16,25 @@ const emailReplierChecker = async () => {
         if (campings.length === 0) return
 
         /*  */
-
         async function processCampings(campings) {
             for (const camping of campings) {
                 console.log("hey")
-                const { smtpAddress } = camping
-                if (!smtpAddress) {
-                    continue // Skip to the next camping if no smtpAddress
+                console.log(camping)
+                const { smtpId } = camping
+                if (!smtpId) {
+                    continue
                 }
 
-                const smtpDetails = await SMTP.findById(smtpAddress)
+                const smtpDetails = await SMTP.findById(smtpId)
                 if (!smtpDetails) {
-                    continue // Skip if smtpDetails not found
+                    continue
                 }
 
                 const { password } = await getJwtToken(
                     smtpDetails.password,
                     process.env.HASHED_PASS
                 )
+                console.log(password)
                 const { user, host } = smtpDetails
                 const config = {
                     imap: {
@@ -42,7 +43,7 @@ const emailReplierChecker = async () => {
                         host,
                         port: 993,
                         tls: true,
-                        authTimeout: 3000,
+                        authTimeout: 300000,
                         tlsOptions: {
                             rejectUnauthorized: false, // Ignore self-signed certificate
                         },
@@ -84,12 +85,12 @@ const emailReplierChecker = async () => {
                         // console.log("headers:", headers)
                         const id = message.attributes.uid
                         const idHeader = "Imap-Id: " + id + "\r\n"
-                        // console.log(
-                        //     "id:",
-                        //     destructuringSubject,
-                        //     "from",
-                        //     destructuringFrom
-                        // )
+                        console.log(
+                            "id:",
+                            destructuringSubject,
+                            "from",
+                            destructuringFrom
+                        )
 
                         const parsed = await new Promise((resolve, reject) => {
                             simpleParser(
@@ -106,6 +107,7 @@ const emailReplierChecker = async () => {
                                 }
                             )
                         })
+                        console.log(parsed.toString)
 
                         let body = parsed.text || "No body content"
                         // body = body.match(/^(.*?)\nOn\s+.*$/s)
@@ -119,25 +121,25 @@ const emailReplierChecker = async () => {
 
                         const extractedToken =
                             tokenMatch && tokenMatch[1] ? tokenMatch[1] : null
-                        const campingId = await getJwtToken(
+                        const { campingId } = await getJwtToken(
                             extractedToken,
                             process.env.REPLY_EMAIL_TOKEN_HASH
                         )
                         // const token
-                        console.log()
-                        console.log(
-                            "campingId:",
-                            campingId,
-                            "body:",
-                            dynamicBody,
-                            "from:",
-                            destructuringFrom,
-                            "to:",
-                            destructuringTo,
-                            "subject:",
-                            destructuringSubject
-                            // body
-                        )
+                        // console.log("")
+                        // console.log(
+                        //     "campingId:",
+                        //     campingId,
+                        //     "body:",
+                        //     dynamicBody,
+                        //     "from:",
+                        //     destructuringFrom,
+                        //     "to:",
+                        //     destructuringTo,
+                        //     "subject:",
+                        //     destructuringSubject
+                        //     // body
+                        // )
                         if (
                             !campingId ||
                             !body ||
@@ -145,7 +147,7 @@ const emailReplierChecker = async () => {
                             !destructuringFrom ||
                             !destructuringSubject
                         ) {
-                            return
+                            return console.log("nothing")
                         }
                         const data = new ReplyEmails({
                             sender: destructuringFrom,
