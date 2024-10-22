@@ -27,8 +27,8 @@ router.get("/mails/campings", userAuthenticate, async (req, res) => {
 router.post("/mails/set/camping", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
-        const { emailListId, sendEmailId, name } = req.body
-        if (!emailListId || !sendEmailId || !name) {
+        const { emailListId, sendEmailId, name, smtpId } = req.body
+        if (!emailListId || !sendEmailId || !name || !smtpId) {
             throw new Error(
                 "Invalid operation please try again with right informations"
             )
@@ -50,6 +50,7 @@ router.post("/mails/set/camping", userAuthenticate, async (req, res) => {
             emailLists: emailListId,
             sendEmail: sendEmailId,
             createdBy: loggedInUser._id,
+            smtpId,
         })
         const data = await newCampings.save()
         res.json({ message: "Successfully created camping", success: true })
@@ -63,7 +64,7 @@ router.post(
     async (req, res) => {
         try {
             const loggedInUser = req.user
-            const { smtpId, smtpPassword } = req.body
+            // const { smtpId, smtpPassword } = req.body
             // if (!smtpPassword) {
             //     smtpPassword = 2323
             // }
@@ -90,6 +91,7 @@ router.post(
                 createdBy: loggedInUser._id,
                 _id: campingId,
             })
+            const { smtpId } = isCampingAvailable
             if (!isCampingAvailable) {
                 throw new Error("No camping found")
             }

@@ -20,6 +20,7 @@ const campingSchema = new Schema({
         ref: "User",
         required: true,
     },
+    smtpId: { type: mongoose.Schema.Types.ObjectId, required: true },
     smtpAddress: { type: mongoose.Schema.Types.ObjectId, ref: "SMTP" },
 })
 
