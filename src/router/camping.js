@@ -63,7 +63,7 @@ router.post(
     async (req, res) => {
         try {
             const loggedInUser = req.user
-            const { smtpId, smtpPassword } = req.body
+            // const { smtpId, smtpPassword } = req.body
             // if (!smtpPassword) {
             //     smtpPassword = 2323
             // }
@@ -97,7 +97,7 @@ router.post(
                 throw new Error(`Camping status is already ${status}`)
             }
             isCampingAvailable.campingStatus = status === "true" ? true : false
-            isCampingAvailable.smtpAddress = smtpId
+            // isCampingAvailable.smtpAddress = smtpId
             if (isCampingAvailable.campingStatus === true) {
                 await emailSender(
                     isCampingAvailable.sendEmail,
