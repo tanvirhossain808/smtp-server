@@ -6,12 +6,13 @@ const imaps = require("imap-simple")
 const SendEmail = require("../models/sendEmail")
 const ReplyEmails = require("../models/replyEmails")
 const tokenPattern = require("../constant/tokenPattern")
+const EmailLists = require("../models/emailLists")
 const emailSender = require("./emailSender")
 const simpleParser = require("mailparser").simpleParser
 let checked = 0
 const emailReplierChecker = async () => {
     const job = cron.schedule("* * * * *", async () => {
-        const campings = await Camping.find({ campingStatus: false })
+        const campings = await Camping.find({ emailSent: true })
         checked++
         if (campings.length === 0) return
 
@@ -22,20 +23,18 @@ const emailReplierChecker = async () => {
                 if (!smtpId) {
                     continue
                 }
+                // console.log(camping, "camping")
 
                 const smtpDetails = await SMTP.findById(smtpId)
                 if (!smtpDetails) {
                     continue
-                }
-                if (isCampingAvailable.campingStatus === true) {
-                    await emailSender(sendEmail, emailLists, _id, smtpId)
                 }
 
                 const { password } = await getJwtToken(
                     smtpDetails.password,
                     process.env.HASHED_PASS
                 )
-                console.log(password)
+                console.log(password, "password")
                 const { user, host } = smtpDetails
                 const config = {
                     imap: {
@@ -117,15 +116,17 @@ const emailReplierChecker = async () => {
                             ? dynamicBodyMatch[1].trim()
                             : body.trim()
 
-                        const tokenPattern = /delivered to ([a-zA-Z0-9\.\-_]+)/ // Regular expression pattern for the token
+                        const tokenPattern =
+                            /delivered to body id : ([a-zA-Z0-9\.\-_]+)/ // Regular expression pattern for the token
                         const tokenMatch = body.match(tokenPattern) // Find the token using the regex
-
                         const extractedToken =
                             tokenMatch && tokenMatch[1] ? tokenMatch[1] : null
-                        const { campingId } = await getJwtToken(
+                        console.log(tokenMatch, "tokenMatch")
+                        const { emailListId } = await getJwtToken(
                             extractedToken,
                             process.env.REPLY_EMAIL_TOKEN_HASH
                         )
+                        console.log(emailListId, "emailListId")
                         // const token
                         // console.log("")
                         // console.log(
@@ -142,7 +143,6 @@ const emailReplierChecker = async () => {
                         //     // body
                         // )
                         if (
-                            !campingId ||
                             !body ||
                             !destructuringTo ||
                             !destructuringFrom ||
@@ -150,15 +150,31 @@ const emailReplierChecker = async () => {
                         ) {
                             return console.log("nothing")
                         }
-                        const data = new ReplyEmails({
-                            sender: destructuringFrom,
-                            receiver: destructuringTo,
-                            subject: destructuringSubject,
-                            campingId,
-                            body: dynamicBody,
-                        })
-                        const savedData = await data.save()
-                        console.log(savedData)
+                        // const data = new ReplyEmails({
+                        //     sender: destructuringFrom,
+                        //     receiver: destructuringTo,
+                        //     subject: destructuringSubject,
+                        //     campingId,
+                        //     body: dynamicBody,
+                        // })
+                        const findEmailList =
+                            await EmailLists.findByIdAndUpdate(emailLists, {
+                                $push: {
+                                    replies: {
+                                        from: destructuringFrom,
+                                        to: destructuringTo,
+                                        subject: destructuringSubject,
+                                        message: dynamicBody,
+                                    },
+                                },
+                            })
+                        if (!findEmailList) {
+                            console.log("Invalid emailListId:", emailLists)
+                            return
+                        }
+                        // const sendEmailDetails =
+                        // const savedData = await data.save()
+                        // console.log(savedData)
                     }
                 } catch (error) {
                     console.error("Error processing emails:", error)
