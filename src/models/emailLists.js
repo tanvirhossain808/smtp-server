@@ -25,6 +25,50 @@ const emailListSchema = new Schema({
         required: true,
         ref: "User",
     },
+    // campingId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: true,
+    // },
+    sent: {
+        type: Boolean,
+        default: false,
+    },
+    camping: { type: Boolean, default: false },
+    sendEmail: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "EmailTemplate",
+        default: null,
+    },
+    replies: [
+        {
+            from: {
+                type: String,
+                validate(email) {
+                    if (!validator.isEmail(email)) {
+                        throw new Error("Invalid email")
+                    }
+                },
+            },
+            to: {
+                type: String,
+                validate(email) {
+                    if (!validator.isEmail(email)) {
+                        throw new Error("Invalid email")
+                    }
+                },
+            },
+            subject: {
+                type: String,
+                trim: true,
+                max: 200,
+            },
+            message: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+        },
+    ],
 })
 
 module.exports = mongoose.model("EmailList", emailListSchema)

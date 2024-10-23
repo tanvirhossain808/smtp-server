@@ -27,8 +27,8 @@ router.get("/mails/campings", userAuthenticate, async (req, res) => {
 router.post("/mails/set/camping", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
-        const { emailListId, sendEmailId, name, smtpId } = req.body
-        if (!emailListId || !sendEmailId || !name || !smtpId) {
+        const { emailListId, sendEmailId, name, smtpId, emailBody } = req.body
+        if (!emailListId || !name || !smtpId || !emailBody) {
             throw new Error(
                 "Invalid operation please try again with right informations"
             )
@@ -37,7 +37,7 @@ router.post("/mails/set/camping", userAuthenticate, async (req, res) => {
         if (!isListEmailAvailable) {
             throw new Error("Please select a email list or create a new one")
         }
-        const isSendEmailAvailable = await SendEmail.findById(sendEmailId)
+        const isSendEmailAvailable = await SendEmail.findById(emailBody)
         if (!isSendEmailAvailable) {
             throw new Error(
                 "Please fill up send email details or select a new one"
@@ -51,6 +51,7 @@ router.post("/mails/set/camping", userAuthenticate, async (req, res) => {
             sendEmail: sendEmailId,
             createdBy: loggedInUser._id,
             smtpId,
+            emailBody,
         })
         const data = await newCampings.save()
         res.json({ message: "Successfully created camping", success: true })
@@ -149,6 +150,10 @@ router.post(
         }
     }
 )
+// host
+// port
+//     user: {
+// password
 
 router.patch(
     "/mails/update/camping/:campingId",

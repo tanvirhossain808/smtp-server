@@ -15,9 +15,10 @@ const emailTemplateSchema = new Schema({
     //         }
     //     },
     // },
-    campingId: { type: mongoose.Schema.Types.ObjectId, ref: "Camping" },
+    // campingId: { type: mongoose.Schema.Types.ObjectId, ref: "Camping" },
     name: { type: String, required: true, max: 200 },
     subject: { type: String, required: true },
+    camping: { type: Boolean, default: false },
     body: { type: String, required: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, required: true },
     emailSent: { type: Boolean, default: false },

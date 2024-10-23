@@ -6,21 +6,19 @@ const imaps = require("imap-simple")
 const SendEmail = require("../models/sendEmail")
 const ReplyEmails = require("../models/replyEmails")
 const tokenPattern = require("../constant/tokenPattern")
+const emailSender = require("./emailSender")
 const simpleParser = require("mailparser").simpleParser
 let checked = 0
 const emailReplierChecker = async () => {
-    // console.log("object")
     const job = cron.schedule("* * * * *", async () => {
-        const campings = await Camping.find({ campingStatus: true })
+        const campings = await Camping.find({ campingStatus: false })
         checked++
         if (campings.length === 0) return
 
-        /*  */
         async function processCampings(campings) {
             for (const camping of campings) {
                 console.log("hey")
-                console.log(camping)
-                const { smtpId } = camping
+                const { smtpId, _id, sendEmail, emailLists } = camping
                 if (!smtpId) {
                     continue
                 }
@@ -28,6 +26,9 @@ const emailReplierChecker = async () => {
                 const smtpDetails = await SMTP.findById(smtpId)
                 if (!smtpDetails) {
                     continue
+                }
+                if (isCampingAvailable.campingStatus === true) {
+                    await emailSender(sendEmail, emailLists, _id, smtpId)
                 }
 
                 const { password } = await getJwtToken(

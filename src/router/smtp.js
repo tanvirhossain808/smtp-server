@@ -10,7 +10,7 @@ const getJWToken = require("../utils/getJWToken")
 router.get("/smtp/lists", userAuthenticate, async (req, res) => {
     try {
         const loggedInUser = req.user
-        const data = await SMTP.find({ userId: loggedInUser._id }).select(
+        const data = await SMTP.find({ createdBy: loggedInUser._id }).select(
             "-userId"
         )
         if (data.length === 0) {
@@ -54,7 +54,7 @@ router.post("/smtp/create", userAuthenticate, async (req, res) => {
             port,
             user,
             password: await generateToken(password),
-            userId: loggedInUser._id,
+            createdBy: loggedInUser._id,
             name,
         })
         const data = await smtp.save()

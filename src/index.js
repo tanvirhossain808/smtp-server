@@ -13,6 +13,7 @@ const emailReplierListRouter = require("./router/replyemail")
 const emailReplyChecker = require("./utils/emailReplierChecker")
 
 const entryPointRouter = require("./router/users")
+const sendingPendingEmails = require("./cron-task/sendingPendingEmai")
 
 const app = express()
 
@@ -50,7 +51,8 @@ connectDB()
     .then(() => {
         app.listen(PORT, async () => {
             console.log(`Server is running on port ${PORT}`)
-            await emailReplyChecker()
+            // await emailReplyChecker()
+            await sendingPendingEmails()
         })
     })
     .catch((err) => {

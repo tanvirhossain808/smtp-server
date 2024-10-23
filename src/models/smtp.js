@@ -42,7 +42,7 @@ const smtpSchema = new Schema({
         required: true,
         min: 4,
     },
-    userId: {
+    createdBy: {
         ref: "User",
         type: mongoose.Schema.Types.ObjectId,
         required: true,

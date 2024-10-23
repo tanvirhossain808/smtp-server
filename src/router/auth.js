@@ -28,11 +28,14 @@ router.post("/signup", async (req, res) => {
         const user = new User({ email, password: encryptedPassword })
         const token = await user.getJWtToken()
         const data = await user.save()
-        res.cookie("token", token, {
+        res.cookie(
+            "token",
+            token /* {
             httpOnly: true,
             secure: true,
             sameSite: "None",
-        })
+        } */
+        )
         res.json({ message: "User created successfully", token })
     } catch (error) {
         res.status(400).json({ message: "fails", err: error.message })

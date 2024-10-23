@@ -9,18 +9,28 @@ const campingSchema = new Schema({
         required: true,
         ref: "EmailList",
     },
-    sendEmail: {
+    // sendEmail: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: true,
+    //     ref: "SendEmail",
+    // },
+    emailBody: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: "SendEmail",
+        ref: "EmailTemplate",
+        default: null,
     },
-    campingStatus: { type: Boolean, default: false },
+    emailSent: { type: Boolean, default: false },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
-    smtpId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    smtpId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "SMTP",
+    },
     smtpAddress: { type: mongoose.Schema.Types.ObjectId, ref: "SMTP" },
 })
 
