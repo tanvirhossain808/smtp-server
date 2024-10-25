@@ -18,8 +18,8 @@ const emailReplierChecker = async () => {
 
         async function processCampings(campings) {
             for (const camping of campings) {
-                console.log("hey")
                 const { smtpId, _id, sendEmail, emailLists } = camping
+                console.log(emailLists, "emailisting")
                 if (!smtpId) {
                     continue
                 }
@@ -158,7 +158,7 @@ const emailReplierChecker = async () => {
                         //     body: dynamicBody,
                         // })
                         const findEmailList =
-                            await EmailLists.findByIdAndUpdate(emailLists, {
+                            await EmailLists.findByIdAndUpdate(emailListId, {
                                 $push: {
                                     replies: {
                                         from: destructuringFrom,
